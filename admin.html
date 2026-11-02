@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Servis - RPhone</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            line-height: 1.6;
+            color: #333;
+            background: #f4f6f9;
+        }
+
+        header,
+        main {
+            max-width: 1100px;
+            margin: auto;
+            padding: 1.5rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin-top: 0;
+        }
+
+        a {
+            color: #0056b3;
+        }
+
+        .panel,
+        .order-card {
+            padding: 1.5rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .login-panel {
+            max-width: 480px;
+            margin: 2rem auto;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.35rem;
+            font-weight: 600;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        textarea {
+            min-height: 70px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 0.7rem 1rem;
+            border: 0;
+            border-radius: 5px;
+            background: #007bff;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toolbar button {
+            background: #343a40;
+        }
+
+        .toolbar a {
+            text-decoration: none;
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .order-list {
+            display: grid;
+            gap: 1rem;
+            margin: 1rem 0 2.5rem;
+        }
+
+        .order-card h3 {
+            overflow-wrap: anywhere;
+        }
+
+        .order-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.5rem 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .order-details p {
+            margin-bottom: 0.25rem;
+            overflow-wrap: anywhere;
+        }
+
+        .status-form {
+            padding-top: 1rem;
+            border-top: 1px solid #ddd;
+        }
+
+        .service-status {
+            display: inline-block;
+            padding: 0.15rem 0.55rem;
+            border-radius: 999px;
+            font-weight: 700;
+        }
+
+        .service-status-red {
+            color: #b02a37;
+            background: #f8d7da;
+        }
+
+        .service-status-yellow {
+            color: #7a5a00;
+            background: #fff3cd;
+        }
+
+        .service-status-green {
+            color: #146c43;
+            background: #d1e7dd;
+        }
+
+        .status-history {
+            margin: 1rem 0 0;
+            padding-left: 1.25rem;
+        }
+
+        .status-history li {
+            margin-bottom: 0.4rem;
+        }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .price-card {
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .price-card label {
+            margin-top: 0.6rem;
+        }
+
+        .message {
+            min-height: 1.5em;
+            margin: 0.75rem 0 0;
+        }
+
+        .error {
+            color: #b02a37;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            main,
+            header {
+                padding: 1rem;
+            }
+
+            .panel,
+            .order-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <h1>Admin RPhone</h1>
+            <p>Kelola order dan progres servis pelanggan.</p>
+        </div>
+        <div class="toolbar">
+            <a href="/">Kembali ke website</a>
+            <button type="button" id="logoutButton" hidden>Keluar</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="panel login-panel" id="loginPanel">
+            <h2>Login Admin</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="password">Password admin</label>
+                    <input type="password" id="password" autocomplete="current-password" required>
+                </div>
+                <button type="submit" id="loginButton">Masuk</button>
+                <p id="loginMessage" class="message" role="alert"></p>
+            </form>
+        </section>
+
+        <section id="adminApp" hidden>
+            <div class="section-heading">
+                <h2>Order pelanggan</h2>
+                <button type="button" id="refreshOrders">Muat ulang</button>
+            </div>
+            <p id="ordersMessage" class="message" role="status" aria-live="polite"></p>
+            <div id="orderList" class="order-list"></div>
+
+            <section class="panel" aria-labelledby="pricesHeading">
+                <h2 id="pricesHeading">Daftar harga</h2>
+                <p>Perubahan harga akan digunakan untuk order baru. Nota order lama tetap memakai harga saat formulir dikirim.</p>
+                <form id="pricesForm">
+                    <div class="price-grid">
+                        <div class="price-card">
+                            <strong>TFT / High Copy</strong>
+                            <label for="biasaMin">Harga minimum (Rp)</label>
+                            <input type="number" id="biasaMin" min="0" step="1000" required>
+                            <label for="biasaMax">Harga maksimum (Rp)</label>
+                            <input type="number" id="biasaMax" min="0" step="1000" required>
+                        </div>
+                        <div class="price-card">
+                            <strong>Incell / Crown</strong>
+                            <label for="sedangMin">Harga minimum (Rp)</label>
+                            <input type="number" id="sedangMin" min="0" step="1000" required>
+                            <label for="sedangMax">Harga maksimum (Rp)</label>
+                            <input type="number" id="sedangMax" min="0" step="1000" required>
+                        </div>
+                        <div class="price-card">
+                            <strong>OLED / Hard OLED</strong>
+                            <label for="bagusMin">Harga minimum (Rp)</label>
+                            <input type="number" id="bagusMin" min="0" step="1000" required>
+                            <label for="bagusMax">Harga maksimum (Rp)</label>
+                            <input type="number" id="bagusMax" min="0" step="1000" required>
+                        </div>
+                        <div class="price-card">
+                            <strong>Original / OEM</strong>
+                            <label for="terbaikMin">Harga minimum (Rp)</label>
+                            <input type="number" id="terbaikMin" min="0" step="1000" required>
+                            <label for="terbaikMax">Harga maksimum (Rp)</label>
+                            <input type="number" id="terbaikMax" min="0" step="1000" required>
+                        </div>
+                    </div>
+                    <h3>Servis lainnya</h3>
+                    <p>Kosongkan harga minimum dan maksimum jika estimasi servis belum ditentukan.</p>
+                    <div class="price-grid" id="servicePriceFields"></div>
+                    <div class="form-group">
+                        <label for="biayaJasa">Biaya jasa (Rp)</label>
+                        <input type="number" id="biayaJasa" min="0" step="1000" required>
+                    </div>
+                    <button type="submit" id="savePricesButton">Simpan harga</button>
+                    <p id="pricesMessage" class="message" role="status" aria-live="polite"></p>
+                </form>
+            </section>
+        </section>
+    </main>
+
+    <script>
+        const statusOptions = [
+            'Formulir diterima',
+            'Menunggu HP dikirim',
+            'HP diterima',
+            'Sedang dianalisis',
+            'Menunggu persetujuan biaya',
+            'Menunggu sparepart',
+            'Sedang diperbaiki',
+            'Selesai',
+            'Siap diambil/dikirim',
+            'Dibatalkan'
+        ];
+        const priceFields = {
+            biasa: ['biasaMin', 'biasaMax'],
+            sedang: ['sedangMin', 'sedangMax'],
+            bagus: ['bagusMin', 'bagusMax'],
+            terbaik: ['terbaikMin', 'terbaikMax']
+        };
+        const servicePriceFields = {
+            battery: 'Ganti baterai',
+            housing: 'Ganti housing / casing',
+            charging_port: 'Perbaikan konektor charger',
+            camera: 'Perbaikan kamera',
+            speaker_mic: 'Perbaikan speaker / mikrofon',
+            buttons: 'Perbaikan tombol power / volume',
+            software: 'Servis software',
+            other: 'Servis lainnya'
+        };
+        Object.keys(servicePriceFields).forEach(function(key) {
+            const card = document.createElement('div');
+            card.className = 'price-card';
+            const title = document.createElement('strong');
+            title.textContent = servicePriceFields[key];
+            card.appendChild(title);
+            for (const [bound, labelText] of [['min', 'Harga minimum (Rp)'], ['max', 'Harga maksimum (Rp)']]) {
+                const inputId = `service-${key}-${bound}`;
+                const label = document.createElement('label');
+                label.htmlFor = inputId;
+                label.textContent = labelText;
+                const input = document.createElement('input');
+                input.id = inputId;
+                input.type = 'number';
+                input.min = '0';
+                input.step = '1000';
+                input.inputMode = 'numeric';
+                card.append(label, input);
+            }
+            document.getElementById('servicePriceFields').appendChild(card);
+        });
+
+        async function apiRequest(url, options = {}) {
+            const response = await fetch(url, {
+                credentials: 'same-origin',
+                ...options
+            });
+            const responseText = await response.text();
+            let result;
+            try {
+                result = JSON.parse(responseText);
+            } catch (error) {
+                throw new Error(
+                    `API mengembalikan respons bukan JSON (HTTP ${response.status}). Buka halaman admin melalui server RPhone, bukan Live Server, lalu pastikan server.js berjalan.`
+                );
+            }
+            if (!response.ok) {
+                throw new Error(result.error || 'Permintaan gagal.');
+            }
+            return result;
+        }
+
+        function setMessage(element, text, isError = false) {
+            element.textContent = text;
+            element.classList.toggle('error', isError);
+        }
+
+        function formatRupiah(value) {
+            return `Rp ${value.toLocaleString('id-ID')}`;
+        }
+
+        function formatOrderPrice(price) {
+            if (price.totalMin === null) {
+                return `LCD menunggu pengecekan; jasa ${formatRupiah(price.serviceFee)}; total belum ditentukan`;
+            }
+            return `${formatRupiah(price.totalMin)} - ${formatRupiah(price.totalMax)}`;
+        }
+
+        function getStatusColor(status) {
+            if (status === 'Dibatalkan' || status === 'Formulir diterima' || status === 'Menunggu HP dikirim') {
+                return 'service-status-red';
+            }
+            if (status === 'Selesai' || status === 'Siap diambil/dikirim') {
+                return 'service-status-green';
+            }
+            return 'service-status-yellow';
+        }
+
+        function createStatusLabel(status) {
+            const label = document.createElement('span');
+            label.className = `service-status ${getStatusColor(status)}`;
+            label.textContent = status;
+            return label;
+        }
+
+        function appendDetail(container, label, value) {
+            const paragraph = document.createElement('p');
+            const strong = document.createElement('strong');
+            strong.textContent = `${label}: `;
+            paragraph.append(strong, document.createTextNode(value || '-'));
+            container.appendChild(paragraph);
+        }
+
+        function renderOrders(orders) {
+            const orderList = document.getElementById('orderList');
+            orderList.replaceChildren();
+
+            if (orders.length === 0) {
+                const emptyMessage = document.createElement('p');
+                emptyMessage.textContent = 'Belum ada formulir order yang masuk.';
+                orderList.appendChild(emptyMessage);
+                return;
+            }
+
+            orders.forEach(function(order) {
+                const card = document.createElement('article');
+                card.className = 'order-card';
+
+                const heading = document.createElement('h3');
+                heading.textContent = `${order.id} — ${order.name}`;
+                card.appendChild(heading);
+
+                const currentStatus = document.createElement('p');
+                currentStatus.append('Status saat ini: ', createStatusLabel(order.status));
+                card.appendChild(currentStatus);
+
+                const details = document.createElement('div');
+                details.className = 'order-details';
+                appendDetail(details, 'Tanggal', new Date(order.createdAt).toLocaleString('id-ID'));
+                appendDetail(details, 'WhatsApp', order.phone);
+                appendDetail(details, 'Tipe HP', order.device);
+                appendDetail(details, 'Jenis servis', `${order.serviceLabel || 'Ganti LCD / layar'}${order.otherService ? ` — ${order.otherService}` : ''}`);
+                if (!order.serviceType || order.serviceType === 'lcd') {
+                    appendDetail(details, 'Kualitas LCD', order.lcdQuality);
+                    appendDetail(details, 'Merk', order.brand);
+                }
+                appendDetail(details, 'Kondisi', order.issue);
+                appendDetail(details, 'Estimasi total', formatOrderPrice(order.price));
+                card.appendChild(details);
+
+                const statusForm = document.createElement('form');
+                statusForm.className = 'status-form';
+                statusForm.dataset.orderId = order.id;
+                const statusLabel = document.createElement('label');
+                statusLabel.textContent = 'Status progres';
+                const statusSelect = document.createElement('select');
+                statusSelect.name = 'status';
+                statusSelect.required = true;
+                statusOptions.forEach(function(status) {
+                    const option = document.createElement('option');
+                    option.value = status;
+                    option.textContent = status;
+                    option.selected = status === order.status;
+                    statusSelect.appendChild(option);
+                });
+                statusForm.append(statusLabel, statusSelect);
+
+                const noteLabel = document.createElement('label');
+                noteLabel.textContent = 'Catatan progres (ditampilkan kepada pelanggan)';
+                noteLabel.style.marginTop = '0.75rem';
+                const noteInput = document.createElement('textarea');
+                noteInput.name = 'note';
+                noteInput.maxLength = 300;
+                noteInput.placeholder = 'Contoh: Komponen sudah dipesan dan diperkirakan tiba besok.';
+                statusForm.append(noteLabel, noteInput);
+
+                const saveButton = document.createElement('button');
+                saveButton.type = 'submit';
+                saveButton.textContent = 'Simpan progres';
+                saveButton.style.marginTop = '0.75rem';
+                statusForm.appendChild(saveButton);
+                card.appendChild(statusForm);
+
+                const historyTitle = document.createElement('h4');
+                historyTitle.textContent = 'Riwayat progres';
+                card.appendChild(historyTitle);
+                const historyList = document.createElement('ol');
+                historyList.className = 'status-history';
+                order.history.forEach(function(entry) {
+                    const item = document.createElement('li');
+                    const time = new Date(entry.at).toLocaleString('id-ID');
+                    item.append(`${time} — `, createStatusLabel(entry.status));
+                    if (entry.note) {
+                        item.append(`: ${entry.note}`);
+                    }
+                    historyList.appendChild(item);
+                });
+                card.appendChild(historyList);
+                orderList.appendChild(card);
+            });
+        }
+
+        function populatePrices(prices) {
+            Object.keys(priceFields).forEach(function(key) {
+                const [minimumId, maximumId] = priceFields[key];
+                document.getElementById(minimumId).value = prices[key].min;
+                document.getElementById(maximumId).value = prices[key].max;
+            });
+            Object.keys(servicePriceFields).forEach(function(key) {
+                const price = prices.services[key] || { min: null, max: null };
+                document.getElementById(`service-${key}-min`).value = price.min === null ? '' : price.min;
+                document.getElementById(`service-${key}-max`).value = price.max === null ? '' : price.max;
+            });
+            document.getElementById('biayaJasa').value = prices.biayaJasa;
+        }
+
+        async function loadOrders() {
+            const message = document.getElementById('ordersMessage');
+            setMessage(message, 'Memuat daftar order...');
+            try {
+                const result = await apiRequest('/api/admin/orders');
+                renderOrders(result.orders);
+                setMessage(message, `${result.orders.length} order tersimpan.`);
+            } catch (error) {
+                setMessage(message, error.message, true);
+                if (error.message.includes('Sesi admin berakhir')) {
+                    showLogin();
+                }
+            }
+        }
+
+        async function loadPrices() {
+            const result = await apiRequest('/api/admin/prices');
+            populatePrices(result.prices);
+        }
+
+        function showAdmin() {
+            document.getElementById('loginPanel').hidden = true;
+            document.getElementById('adminApp').hidden = false;
+            document.getElementById('logoutButton').hidden = false;
+        }
+
+        function showLogin() {
+            document.getElementById('loginPanel').hidden = false;
+            document.getElementById('adminApp').hidden = true;
+            document.getElementById('logoutButton').hidden = true;
+        }
+
+        async function initialize() {
+            try {
+                const session = await apiRequest('/api/admin/session');
+                if (session.authenticated) {
+                    showAdmin();
+                    await Promise.all([loadOrders(), loadPrices()]);
+                }
+            } catch (error) {
+                setMessage(document.getElementById('loginMessage'), error.message, true);
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const button = document.getElementById('loginButton');
+            const message = document.getElementById('loginMessage');
+            button.disabled = true;
+            setMessage(message, 'Memeriksa password...');
+            try {
+                await apiRequest('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: document.getElementById('password').value })
+                });
+                document.getElementById('password').value = '';
+                showAdmin();
+                await Promise.all([loadOrders(), loadPrices()]);
+            } catch (error) {
+                setMessage(message, error.message, true);
+            } finally {
+                button.disabled = false;
+            }
+        });
+
+        document.getElementById('logoutButton').addEventListener('click', async function() {
+            try {
+                await apiRequest('/api/admin/logout', { method: 'POST' });
+                showLogin();
+                setMessage(document.getElementById('loginMessage'), 'Anda sudah keluar.');
+            } catch (error) {
+                setMessage(document.getElementById('ordersMessage'), error.message, true);
+            }
+        });
+
+        document.getElementById('refreshOrders').addEventListener('click', loadOrders);
+
+        document.getElementById('orderList').addEventListener('submit', async function(event) {
+            if (!event.target.matches('.status-form')) {
+                return;
+            }
+            event.preventDefault();
+            const form = event.target;
+            const button = form.querySelector('button[type="submit"]');
+            button.disabled = true;
+            try {
+                await apiRequest(`/api/admin/orders/${encodeURIComponent(form.dataset.orderId)}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        status: form.elements.status.value,
+                        note: form.elements.note.value
+                    })
+                });
+                setMessage(document.getElementById('ordersMessage'), 'Progres berhasil disimpan.');
+                await loadOrders();
+            } catch (error) {
+                setMessage(document.getElementById('ordersMessage'), error.message, true);
+            } finally {
+                button.disabled = false;
+            }
+        });
+
+        document.getElementById('pricesForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const button = document.getElementById('savePricesButton');
+            const message = document.getElementById('pricesMessage');
+            button.disabled = true;
+
+            const prices = {};
+            Object.keys(priceFields).forEach(function(key) {
+                const [minimumId, maximumId] = priceFields[key];
+                prices[key] = {
+                    min: Number(document.getElementById(minimumId).value),
+                    max: Number(document.getElementById(maximumId).value)
+                };
+            });
+            prices.services = {};
+            Object.keys(servicePriceFields).forEach(function(key) {
+                const minimumValue = document.getElementById(`service-${key}-min`).value;
+                const maximumValue = document.getElementById(`service-${key}-max`).value;
+                prices.services[key] = {
+                    min: minimumValue === '' ? null : Number(minimumValue),
+                    max: maximumValue === '' ? null : Number(maximumValue)
+                };
+            });
+            prices.biayaJasa = Number(document.getElementById('biayaJasa').value);
+
+            try {
+                await apiRequest('/api/admin/prices', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(prices)
+                });
+                setMessage(message, 'Daftar harga berhasil disimpan untuk order baru.');
+            } catch (error) {
+                setMessage(message, error.message, true);
+            } finally {
+                button.disabled = false;
+            }
+        });
+
+        initialize();
+    </script>
+</body>
+</html>

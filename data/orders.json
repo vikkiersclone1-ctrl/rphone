@@ -1,0 +1,60 @@
+{
+  "orders": [
+    {
+      "id": "RP-MVWDY58P-32DFE1",
+      "createdAt": "2026-10-31T12:36:48.265Z",
+      "name": "popp",
+      "phone": "1234567890",
+      "normalizedPhone": "1234567890",
+      "device": "android",
+      "lcdQuality": "TFT / High Copy (Biasa)",
+      "brand": "JK / GX OLED (Khusus iPhone)",
+      "issue": "",
+      "price": {
+        "label": "TFT / High Copy",
+        "lcdMin": 150000,
+        "lcdMax": 250000,
+        "serviceFee": 0,
+        "totalMin": 150000,
+        "totalMax": 250000
+      },
+      "status": "Siap diambil/dikirim",
+      "history": [
+        {
+          "at": "2026-10-31T12:36:48.265Z",
+          "status": "Formulir diterima",
+          "note": "Formulir berhasil diterima."
+        },
+        {
+          "at": "2026-10-31T12:38:46.548Z",
+          "status": "Sedang diperbaiki",
+          "note": ""
+        },
+        {
+          "at": "2026-10-31T12:58:01.966Z",
+          "status": "Siap diambil/dikirim",
+          "note": ""
+        }
+      ]
+    }
+  ],
+  "prices": {
+    "biasa": {
+      "min": 150000,
+      "max": 250000
+    },
+    "sedang": {
+      "min": 250000,
+      "max": 450000
+    },
+    "bagus": {
+      "min": 450000,
+      "max": 800000
+    },
+    "terbaik": {
+      "min": 700000,
+      "max": 1500000
+    },
+    "biayaJasa": 0
+  }
+}

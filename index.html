@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixPhone - Service HP & Spesialis Ganti LCD</title>
+    <style>
+        /* CSS Reset & Variables */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #007bff;
+            --secondary: #0056b3;
+            --dark: #1a1a1a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --accent: #28a745;
+        }
+
+        body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f6f9;
+        }
+
+        /* Navbar */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: auto;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .logo-image {
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
+            display: block;
+            border-radius: 12px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            color: #fff;
+            text-align: center;
+            padding: 5rem 1rem;
+        }
+
+        .hero::before,
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+        }
+
+        .hero::before {
+            inset: -4px;
+            background: url('hero-background.jpg') center/cover no-repeat;
+            filter: blur(2px);
+        }
+
+        .hero::after {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: #fff;
+            padding: 0.8rem 1.8rem;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary);
+        }
+
+        /* Container General */
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 3.5rem 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+            color: var(--dark);
+        }
+
+        /* Form Booking */
+        .booking-section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        #formResult {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-left: 4px solid var(--primary);
+            border-radius: 5px;
+        }
+
+        #formResult p {
+            margin: 0.5rem 0;
+        }
+
+        #formSummary {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .tracking-section {
+            max-width: 760px;
+            margin: auto;
+        }
+
+        .tracking-panel,
+        .tracking-result {
+            background: #fff;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .tracking-result {
+            margin-top: 1rem;
+        }
+
+        .tracking-result article {
+            padding: 1rem 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tracking-result article:last-child {
+            border-bottom: 0;
+        }
+
+        .tracking-history {
+            padding-left: 1.25rem;
+            margin-top: 0.75rem;
+        }
+
+        .service-status {
+            display: inline-block;
+            padding: 0.15rem 0.55rem;
+            border-radius: 999px;
+            font-weight: 700;
+        }
+
+        .service-status-red {
+            color: #b02a37;
+            background: #f8d7da;
+        }
+
+        .service-status-yellow {
+            color: #7a5a00;
+            background: #fff3cd;
+        }
+
+        .service-status-green {
+            color: #146c43;
+            background: #d1e7dd;
+        }
+
+        .form-message {
+            margin-top: 0.75rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: #fff;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header & Nav -->
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="logo.png" alt="RPhone logo" class="logo-image">
+                <span>RPhone</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Beranda</a></li>
+                <li><a href="#booking">Konsultasi</a></li>
+                <li><a href="#pelacakan">Lacak Servis</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+        <h1>Jasa Service & Ganti LCD HP Profesional</h1>
+        <p>Pilihan Sparepart Lengkap: Dari Tipe Standar Ekonomis hingga Kualitas Original 100%</p>
+        <a href="#booking" class="btn">Isi Form Konsultasi</a>
+    </section>
+
+    <!-- Form Booking & Konsultasi -->
+    <section class="container" id="booking">
+        <div class="section-title">
+            <h2>Form Estimasi & Konsultasi</h2>
+            <p>Isi detail di bawah untuk mendapatkan estimasi dan konsultasi service</p>
+        </div>
+
+        <div class="booking-section">
+            <form id="serviceForm">
+                <div class="form-group">
+                    <label for="nama">Nama Anda</label>
+                    <input type="text" id="nama" placeholder="Contoh: Budi Santoso" required>
+                </div>
+                <div class="form-group">
+                    <label for="nomorWa">Nomor WhatsApp</label>
+                    <input type="tel" id="nomorWa" placeholder="Contoh: 081234567890" autocomplete="tel" inputmode="tel" required>
+                </div>
+                <div class="form-group">
+                    <label for="tipeHp">Tipe HP (Merk & Seri)</label>
+                    <input type="text" id="tipeHp" placeholder="Contoh: Android / iPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="serviceType">Jenis Servis</label>
+                    <select id="serviceType" required>
+                        <option value="lcd">Ganti LCD / layar</option>
+                        <option value="battery">Ganti baterai</option>
+                        <option value="housing">Ganti housing / casing</option>
+                        <option value="charging_port">Perbaikan konektor charger</option>
+                        <option value="camera">Perbaikan kamera</option>
+                        <option value="speaker_mic">Perbaikan speaker / mikrofon</option>
+                        <option value="buttons">Perbaikan tombol power / volume</option>
+                        <option value="software">Servis software</option>
+                        <option value="other">Servis lainnya</option>
+                    </select>
+                    <p id="servicePriceHint" class="form-message"></p>
+                </div>
+                <div class="form-group" id="lcdQualityGroup">
+                    <label for="kualitasLcd">Pilihan Kualitas LCD</label>
+                    <select id="kualitasLcd" required>
+                        <option value="">-- Pilih Kualitas Layar --</option>
+                        <option value="TFT / High Copy (Biasa)">TFT / High Copy (Paling Murah)</option>
+                        <option value="Incell (Menengah/Standard)">Incell (Standar & Hemat)</option>
+                        <option value="OLED (Bagus)">OLED (Bagus & Warna Tajam)</option>
+                        <option value="Original 100% / Super AMOLED (Terbaik)">Original 100% / Super AMOLED (Kualitas Terbaik)</option>
+                        <option value="Belum Tahu / Butuh Rekomendasi">Belum Tahu (Butuh Saran Teknisi)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="brandGroup">
+                    <label for="pilihanMerk">Pilihan Merk Sparepart (Opsional)</label>
+                    <select id="pilihanMerk">
+                        <option value="Bebas / Bebas Rekomendasi Teknisi">Bebas (Rekomendasi Teknisi)</option>
+                        <option value="Crown Super">Crown Super</option>
+                        <option value="OG Premium">OG Premium</option>
+                        <option value="JK / GX OLED (Khusus iPhone)">JK / GX OLED</option>
+                        <option value="Original OEM">Original OEM / Cabutan</option>
+                    </select>
+                </div>
+                <div class="form-group" id="otherServiceGroup" hidden>
+                    <label for="otherService">Jelaskan servis lainnya</label>
+                    <input type="text" id="otherService" maxlength="100" placeholder="Contoh: ganti kaca kamera belakang">
+                </div>
+                <div class="form-group">
+                    <label for="keluhan">Detail kerusakan / permintaan</label>
+                    <textarea id="keluhan" rows="3" placeholder="Contoh: Pecah, bergaris, layar hitam tapi nada panggil ada..."></textarea>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;" disabled>Kirim Formulir</button>
+            </form>
+            <p id="serviceMessage" class="form-message" role="status" aria-live="polite"></p>
+            <div id="formResult" aria-live="polite" hidden>
+                <h3>Nota Servis</h3>
+                <p id="formConfirmation"></p>
+                <pre id="formSummary"></pre>
+                <p><strong>Status:</strong> <span id="orderStatus"></span></p>
+                <p><strong>WhatsApp admin:</strong> <a href="https://wa.me/6281234567890">+62 812-3456-7890</a></p>
+                <p><strong>Alamat pengiriman HP:</strong> Alamat lengkap admin belum diberikan. Hubungi admin sebelum mengirim HP.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pelacakan Progres -->
+    <section class="container tracking-section" id="pelacakan">
+        <div class="section-title">
+            <h2>Lacak Progres Servis</h2>
+            <p>Masukkan nama lengkap persis atau nomor WhatsApp lengkap yang digunakan saat mengisi formulir.</p>
+            <p>Siapa pun yang mengetahui nama atau nomor tersebut dapat mencari. Hasil dibatasi pada detail perangkat dan progres servis.</p>
+            <p><span class="service-status service-status-red">Belum dimulai / dibatalkan</span> <span class="service-status service-status-yellow">Sedang diproses</span> <span class="service-status service-status-green">Selesai</span></p>
+        </div>
+        <div class="tracking-panel">
+            <form id="trackingForm">
+                <div class="form-group">
+                    <label for="trackingQuery">Nama lengkap atau nomor WhatsApp</label>
+                    <input type="text" id="trackingQuery" autocomplete="off" required>
+                </div>
+                <button type="submit" class="btn">Cari Progres</button>
+                <p id="trackingMessage" class="form-message" role="status" aria-live="polite"></p>
+            </form>
+            <div id="trackingResults" class="tracking-result" aria-live="polite" hidden></div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 FixPhone Service Center. All Rights Reserved.</p>
+        <p style="margin-top: 0.5rem; color: #aaa;">Melayani Service HP Android & iPhone Bergaransi</p>
+        <a href="/admin.html" class="btn" style="margin-top: 1rem;">Admin</a>
+    </footer>
+
+    <!-- Order and tracking API -->
+    <script>
+        function formatRupiah(value) {
+            return `Rp ${value.toLocaleString('id-ID')}`;
+        }
+
+        async function apiRequest(url, options) {
+            const response = await fetch(url, options);
+            const responseText = await response.text();
+            let result;
+            try {
+                result = JSON.parse(responseText);
+            } catch (error) {
+                throw new Error(
+                    `API mengembalikan respons bukan JSON (HTTP ${response.status}). Buka website melalui server RPhone, bukan file:// atau Live Server, lalu pastikan server.js berjalan.`
+                );
+            }
+            if (!response.ok) {
+                throw new Error(result.error || 'Permintaan gagal.');
+            }
+            return result;
+        }
+
+        function getStatusColor(status) {
+            if (status === 'Dibatalkan' || status === 'Formulir diterima' || status === 'Menunggu HP dikirim') {
+                return 'service-status-red';
+            }
+            if (status === 'Selesai' || status === 'Siap diambil/dikirim') {
+                return 'service-status-green';
+            }
+            return 'service-status-yellow';
+        }
+
+        function createStatusLabel(status) {
+            const label = document.createElement('span');
+            label.className = `service-status ${getStatusColor(status)}`;
+            label.textContent = status;
+            return label;
+        }
+
+        const serviceForm = document.getElementById('serviceForm');
+        const formSubmitButton = serviceForm.querySelector('button[type="submit"]');
+        const formMessage = document.getElementById('serviceMessage');
+        const trackingForm = document.getElementById('trackingForm');
+        const serviceTypeSelect = document.getElementById('serviceType');
+        const lcdQualitySelect = document.getElementById('kualitasLcd');
+        const brandSelect = document.getElementById('pilihanMerk');
+        let prices = null;
+
+        function renderTrackingResults(orders) {
+            const results = document.getElementById('trackingResults');
+            results.replaceChildren();
+            results.hidden = false;
+
+            if (orders.length === 0) {
+                results.textContent = 'Belum ada order dengan nama lengkap atau nomor WhatsApp tersebut.';
+                return;
+            }
+
+            orders.forEach(function(order) {
+                const article = document.createElement('article');
+                const title = document.createElement('h3');
+                title.textContent = `Nota ${order.id}`;
+                article.appendChild(title);
+
+                [
+                    `Tanggal: ${new Date(order.createdAt).toLocaleString('id-ID')}`,
+                    `Tipe HP: ${order.device}`,
+                    `Jenis servis: ${order.serviceLabel}${order.otherService ? ` — ${order.otherService}` : ''}`,
+                    ...(order.serviceType === 'lcd' ? [`Pilihan LCD: ${order.lcdQuality}`] : [])
+                ].forEach(function(text) {
+                    const paragraph = document.createElement('p');
+                    paragraph.textContent = text;
+                    article.appendChild(paragraph);
+                });
+
+                const statusParagraph = document.createElement('p');
+                statusParagraph.append('Status saat ini: ', createStatusLabel(order.status));
+                article.appendChild(statusParagraph);
+
+                const historyTitle = document.createElement('strong');
+                historyTitle.textContent = 'Riwayat progres';
+                article.appendChild(historyTitle);
+                const historyList = document.createElement('ol');
+                historyList.className = 'tracking-history';
+                order.history.forEach(function(entry) {
+                    const item = document.createElement('li');
+                    const timestamp = new Date(entry.at).toLocaleString('id-ID');
+                    item.append(`${timestamp} — `, createStatusLabel(entry.status));
+                    if (entry.note) {
+                        item.append(`: ${entry.note}`);
+                    }
+                    historyList.appendChild(item);
+                });
+                article.appendChild(historyList);
+                results.appendChild(article);
+            });
+        }
+
+        function updateServiceFields() {
+            const isLcdService = serviceTypeSelect.value === 'lcd';
+            const isOtherService = serviceTypeSelect.value === 'other';
+            document.getElementById('lcdQualityGroup').hidden = !isLcdService;
+            document.getElementById('brandGroup').hidden = !isLcdService;
+            document.getElementById('otherServiceGroup').hidden = !isOtherService;
+            lcdQualitySelect.required = isLcdService;
+            document.getElementById('otherService').required = isOtherService;
+
+            if (!prices) {
+                return;
+            }
+
+            const hint = document.getElementById('servicePriceHint');
+            if (isLcdService) {
+                hint.textContent = 'Harga LCD mengikuti kualitas layar yang dipilih di bawah.';
+                return;
+            }
+            const servicePrice = prices.services[serviceTypeSelect.value];
+            hint.textContent = servicePrice && servicePrice.min !== null
+                ? `Estimasi servis: ${formatRupiah(servicePrice.min)} - ${formatRupiah(servicePrice.max)}${prices.biayaJasa ? `, biaya jasa ${formatRupiah(prices.biayaJasa)}` : ''}.`
+                : 'Harga servis ini belum ditentukan. Admin akan mengonfirmasi estimasi setelah pengecekan.';
+        }
+
+        serviceTypeSelect.addEventListener('change', updateServiceFields);
+        updateServiceFields();
+
+        serviceForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            formSubmitButton.disabled = true;
+            document.getElementById('formResult').hidden = true;
+            formMessage.textContent = 'Menyimpan formulir...';
+
+            const data = {
+                name: document.getElementById('nama').value,
+                phone: document.getElementById('nomorWa').value,
+                device: document.getElementById('tipeHp').value,
+                serviceType: serviceTypeSelect.value,
+                lcdQuality: lcdQualitySelect.value,
+                brand: brandSelect.value,
+                otherService: document.getElementById('otherService').value,
+                issue: document.getElementById('keluhan').value
+            };
+
+            try {
+                const response = await apiRequest('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const order = response.order;
+                const price = order.price;
+                const priceDetails = price.totalMin === null
+                    ? `Estimasi harga: menunggu pengecekan admin\nBiaya jasa: ${formatRupiah(price.serviceFee)}\nEstimasi total: belum dapat ditentukan sebelum pengecekan`
+                    : `Harga servis (${price.label}): ${formatRupiah(price.itemMin)} - ${formatRupiah(price.itemMax)}\nBiaya jasa: ${formatRupiah(price.serviceFee)}\nEstimasi total: ${formatRupiah(price.totalMin)} - ${formatRupiah(price.totalMax)}`;
+                const summary = [
+                    `Nomor Nota: ${order.id}`,
+                    `Tanggal: ${new Date(order.createdAt).toLocaleString('id-ID')}`,
+                    `Nama: ${order.name}`,
+                    `Nomor WhatsApp: ${order.phone}`,
+                    `Tipe HP: ${order.device}`,
+                    `Jenis servis: ${order.serviceLabel}${order.otherService ? ` — ${order.otherService}` : ''}`,
+                    ...(order.serviceType === 'lcd' ? [`Kualitas LCD: ${order.lcdQuality}`, `Merk Sparepart: ${order.brand}`] : []),
+                    `Kondisi Layar: ${order.issue || '-'}`,
+                    priceDetails
+                ].join('\n');
+
+                document.getElementById('formSummary').textContent = summary;
+                const statusLabel = createStatusLabel(order.status);
+                document.getElementById('orderStatus').replaceChildren(statusLabel);
+                document.getElementById('formConfirmation').textContent =
+                    'Pesanan berhasil dikirim dan tersimpan. Simpan nomor nota untuk referensi.';
+                document.getElementById('formResult').hidden = false;
+                formMessage.textContent = 'Formulir berhasil dikirim dan tersimpan. Gunakan nama lengkap atau nomor WhatsApp untuk melihat progres servis.';
+                document.getElementById('formResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                serviceForm.reset();
+            } catch (error) {
+                formMessage.textContent = `Formulir belum terkirim: ${error.message}`;
+            } finally {
+                formSubmitButton.disabled = false;
+            }
+        });
+
+        trackingForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const message = document.getElementById('trackingMessage');
+            const results = document.getElementById('trackingResults');
+            const submitButton = trackingForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            results.hidden = true;
+            message.textContent = 'Mencari progres...';
+
+            try {
+                const response = await apiRequest('/api/tracking', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: document.getElementById('trackingQuery').value })
+                });
+                renderTrackingResults(response.orders);
+                message.textContent = response.orders.length
+                    ? `Ditemukan ${response.orders.length} order.`
+                    : 'Tidak ada order yang cocok.';
+            } catch (error) {
+                message.textContent = `Pencarian gagal: ${error.message}`;
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
+
+        async function loadPublicPrices() {
+            try {
+                const response = await apiRequest('/api/public-config');
+                prices = response.prices;
+                updateServiceFields();
+                formSubmitButton.disabled = false;
+            } catch (error) {
+                formMessage.textContent = `Form belum siap: tidak dapat memuat daftar harga dari server. ${error.message}`;
+                formSubmitButton.disabled = true;
+            }
+        }
+
+        loadPublicPrices();
+    </script>
+</body>
+</html>
